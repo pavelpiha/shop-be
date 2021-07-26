@@ -1,0 +1,105 @@
+openapi: 3.0.0
+components:
+  schemas:
+    ErrorResponse:
+      type: string
+    NotFoundResponse:
+      type: string
+    ProductResponse:
+      description: Product
+      type: object
+      properties:
+        id:
+          type: string
+          description: Product identifier in form of UUID
+        title:
+          type: string
+          description: Product title
+        description:
+          type: string
+          description: Product description
+        price:
+          type: number
+          description: Product price
+        count:
+          type: number
+          description: Product count
+        img:
+          type: string
+          description: Product image
+      additionalProperties: false
+    ProductListResponse:
+      type: array
+      items:
+        description: Product
+        type: object
+        properties:
+          id:
+            type: string
+            description: Product identifier in form of UUID
+          title:
+            type: string
+            description: Product title
+          description:
+            type: string
+            description: Product description
+          price:
+            type: number
+            description: Product price
+          count:
+            type: number
+            description: Product count
+          img:
+            type: string
+            description: Product image
+        additionalProperties: false
+      uniqueItems: true
+      additionalProperties: false
+  securitySchemes: {}
+info:
+  title: Products Service API
+  description: ''
+  version: 1.0.0
+paths: 
+ /products:
+    get:
+      operationId: getProductsList
+      summary: List of products
+      description: Returns list of products
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductListResponse'
+        '500':
+          description: An error retrieving product list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /products/{id}:
+    get:
+      operationId: getProductById
+      summary: Product
+      description: Returns a product with given id
+      responses:
+        '200':
+          description: Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+        '500':
+          description: An error retrieving product list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
