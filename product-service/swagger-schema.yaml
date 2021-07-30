@@ -1,0 +1,93 @@
+openapi: 3.0.0
+info:
+  title: Shop API
+  description: This is a Shop API
+  contact:
+    email: pavelpihagithub@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://pkurbv6f41.execute-api.eu-west-1.amazonaws.com/dev
+  description: Shop API
+tags:
+- name: Products
+  description: Operations available to regular developers
+paths:
+  /products:
+    get:
+      tags:
+      - products
+      summary: searches products
+      description: |
+        Get all products
+      operationId: getAllProducts
+      responses:
+        "200":
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        "400":
+          description: Product with id not found
+  /products/{productId}:
+    get:
+      tags:
+      - products
+      summary: searches products
+      description: |
+        By passing the product id you can get specific product
+      operationId: getProductById
+      parameters:
+      - name: productId
+        in: path
+        description: pass a product Id for looking up a product
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        "400":
+          description: Product with id not found
+components:
+  schemas:
+    Product:
+      required:
+      - count
+      - description
+      - id
+      - img
+      - price
+      - title
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        title:
+          type: string
+          example: Widget Adapter
+        description:
+          type: string
+          example: This product is reliable
+        count:
+          type: integer
+          example: 10
+        price:
+          type: number
+          example: 100.99
+        img:
+          type: string
+          example: test-product.jpeg
