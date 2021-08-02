@@ -1,28 +1,34 @@
 import "source-map-support/register";
 import {
+  ValidatedAPIGatewayProxyEvent,
   formatJSONResponse,
-  InputAPIGatewayProxyEvent,
+  ParsedAPIGatewayProxyEvent,
 } from "../../libs/apiGateway";
 import { middyfy } from "../../libs/lambda";
 import createHttpError from "http-errors";
 
 import { ProductServiceInstance } from "../../service/product-service";
 import { ProductServiceInterface } from "../../service/product-service-interface";
+import schema from "./schema";
 
-export class GetProductByIdController {
+export type CreateProductEvent = ParsedAPIGatewayProxyEvent<typeof schema>;
+
+export class CreateProductController {
   constructor(private service: ProductServiceInterface) {}
 
-  handler: InputAPIGatewayProxyEvent = async (event, context) => {
-    console.log('Incoming request', event);
+  handler: ValidatedAPIGatewayProxyEvent<typeof schema> = async (
+    { body }: CreateProductEvent,
+    context
+  ) => {
+    console.log("Incoming request body", body);
     context.callbackWaitsForEmptyEventLoop = false;
     try {
-      const productId = event.pathParameters.productId;
-      const product = await this.service.getById(productId);
+      const product = await this.service.create(body);
       if (product) {
         return formatJSONResponse(200, product);
       } else {
         const response = new createHttpError.BadRequest(
-          `Product with Id: '${productId}' not found`
+          `Product does not created`
         );
         return formatJSONResponse(response.statusCode, response.message);
       }
@@ -33,6 +39,6 @@ export class GetProductByIdController {
   };
 }
 
-export const getProductById = middyfy(
-  new GetProductByIdController(ProductServiceInstance).handler
+export const handler = middyfy(
+  new CreateProductController(ProductServiceInstance).handler
 );
