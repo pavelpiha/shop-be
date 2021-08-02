@@ -1,14 +1,11 @@
 import { QueryConfig, Pool } from "pg";
 import type { Product } from "../model/product-model";
 import { ProductServiceInterface } from "./product-service-interface";
+import createHttpError from "http-errors";
 
 const SQL_GET_ALL_PRODUCTS =
   "SELECT p.id, p.title, p.description, p.image, p.price, s.count FROM products p LEFT JOIN stocks s on p.id = s.product_id";
 const SQL_GET_PRODUCT_BY_ID = SQL_GET_ALL_PRODUCTS + " WHERE p.id = $1";
-const SQL_CREATE_PRODUCT =
-  "WITH rows AS " +
-  "(INSERT INTO products (title, description, image, price) VALUES ($1, $2, $3, $4) RETURNING id) INSERT " +
-  "INTO stocks (product_id, count) SELECT id, $5 FROM rows RETURNING product_id as id";
 const CREATE_PRODUCT =
   "INSERT INTO products (title, description, image, price) VALUES ($1, $2, $3, $4) RETURNING id";
 const CREATE_COUNT = "INSERT INTO stocks (product_id, count) VALUES ($1, $2)";
@@ -39,11 +36,18 @@ class ProductService implements ProductServiceInterface {
   }
 
   async getById(id: string) {
-    const result = await this.runQuery<Product>({
-      text: SQL_GET_PRODUCT_BY_ID,
-      values: [id],
-    });
-    return result.rows[0];
+    const uuidRegexp: RegExp =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const isIdValid = uuidRegexp.test(id);
+    if (isIdValid) {
+      const result = await this.runQuery<Product>({
+        text: SQL_GET_PRODUCT_BY_ID,
+        values: [id],
+      });
+      return result.rows[0];
+    } else {
+      throw new createHttpError.BadRequest(`Wrong uuid: '${id}'`);
+    }
   }
 
   async create(product: Omit<Product, "id">) {
@@ -73,20 +77,17 @@ class ProductService implements ProductServiceInterface {
   }
 
   private async runQuery<R>(query: QueryConfig) {
+    const client = await this.clientPool.connect();
     try {
-      const client = await this.clientPool.connect();
-      try {
-        return await client.query<R>(query);
-      } catch (error) {
-        console.log("Failed to execute query:", query);
-        console.log("Error:", error);
-        throw error;
-      } finally {
-        client.release();
-      }
+      const result = await client.query<R>(query);
+      console.log("result", result);
+      return result;
     } catch (error) {
-      console.log("Failed to get connection:", error);
-      throw error;
+      console.log("Failed to execute query:", query);
+      console.log("Error:", error);
+      // throw error;
+    } finally {
+      client.release();
     }
   }
 }

@@ -13,7 +13,7 @@ export class GetProductByIdController {
   constructor(private service: ProductServiceInterface) {}
 
   handler: InputAPIGatewayProxyEvent = async (event, context) => {
-    console.log('Incoming request', event);
+    console.log("Incoming request", event);
     context.callbackWaitsForEmptyEventLoop = false;
     try {
       const productId = event.pathParameters.productId;
@@ -27,8 +27,13 @@ export class GetProductByIdController {
         return formatJSONResponse(response.statusCode, response.message);
       }
     } catch (error) {
-      const response = new createHttpError.InternalServerError(error.message);
-      return formatJSONResponse(response.statusCode, response.message);
+      const isHttpError = createHttpError.isHttpError(error);
+      if (isHttpError) {
+        return formatJSONResponse(error.statusCode, error.message);
+      } else {
+        const response = new createHttpError.InternalServerError(error.message);
+        return formatJSONResponse(response.statusCode, response.message);
+      }
     }
   };
 }
