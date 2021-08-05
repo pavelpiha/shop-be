@@ -2,7 +2,7 @@ export class Product {
   id: string;
   title: string;
   description: string;
-  count: number;
+  image?: string;
   price: number;
-  img: string;
+  count: number;
 }
