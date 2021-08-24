@@ -1,0 +1,77 @@
+service: import-service
+
+frameworkVersion: "2"
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+custom:
+  webpack:
+    webpackConfig: "./webpack.config.js" # Name of webpack configuration file
+    includeModules: true # Node modules configuration for packaging
+    packager: "npm" # Packager that will be used to package your external modules
+    excludeFiles: src/**/*.test.js # Provide a glob for files to ignore
+  bucketName: shop-csv-upload
+  uploadFolderName: uploaded
+  parsedFolderName: parsed
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  stage: dev
+  region: eu-west-1
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
+    S3_BUCKET_NAME: ${self:custom.bucketName}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: s3:*
+          Resource:
+            - "arn:aws:s3:::${self:custom.bucketName}"
+            - "arn:aws:s3:::${self:custom.bucketName}/*"
+            - "arn:aws:s3:::${self:custom.bucketName}/*/*"
+
+functions:
+  importProductsFile:
+    handler: src/functions/import-file/handler.importProductsFile
+    events:
+      - http:
+          path: import
+          method: get
+          request:
+            parameters:
+              querystrings:
+                name: true
+          cors:
+            origin: "*"
+
+  importFileParser:
+    handler: src/functions/import-file-parser/handler.importFileParser
+    events:
+      - s3:
+          bucket: ${self:custom.bucketName}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: ${self:custom.uploadFolderName}
+          existing: true
+# resources:
+#   Resources:
+#     FilesBucket:
+#       Type: AWS::S3::Bucket
+#       Properties:
+#         BucketName: ${self:custom.bucketName}
+#         CorsConfiguration:
+#           CorsRules:
+#             - AllowedHeaders:
+#                 - "*"
+#               AllowedMethods:
+#                 - "PUT"
+#               AllowedOrigins:
+#                 - "*"
