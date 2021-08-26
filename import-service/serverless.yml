@@ -12,7 +12,7 @@ custom:
     includeModules: true # Node modules configuration for packaging
     packager: "npm" # Packager that will be used to package your external modules
     excludeFiles: src/**/*.test.js # Provide a glob for files to ignore
-  bucketName: shop-csv-upload
+  bucketName: shop-file-upload
   uploadFolderName: uploaded
   parsedFolderName: parsed
 
@@ -61,17 +61,3 @@ functions:
           rules:
             - prefix: ${self:custom.uploadFolderName}
           existing: true
-# resources:
-#   Resources:
-#     FilesBucket:
-#       Type: AWS::S3::Bucket
-#       Properties:
-#         BucketName: ${self:custom.bucketName}
-#         CorsConfiguration:
-#           CorsRules:
-#             - AllowedHeaders:
-#                 - "*"
-#               AllowedMethods:
-#                 - "PUT"
-#               AllowedOrigins:
-#                 - "*"
