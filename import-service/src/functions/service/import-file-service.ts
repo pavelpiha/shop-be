@@ -7,7 +7,7 @@ import {
 import csvParser from "csv-parser";
 import { Readable } from "stream";
 
-const BUCKET_NAME = "shop-csv-upload";
+const BUCKET_NAME = "shop-file-upload";
 const s3Client = new S3Client({
   region: "eu-west-1",
 });
