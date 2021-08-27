@@ -85,7 +85,7 @@ class ProductService implements ProductServiceInterface {
     } catch (error) {
       console.log("Failed to execute query:", query);
       console.log("Error:", error);
-      // throw error;
+      throw error;
     } finally {
       client.release();
     }
