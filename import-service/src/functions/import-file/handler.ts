@@ -14,7 +14,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
   try {
     const fileName = event.queryStringParameters.name;
     const getObjectParams = {
-      Bucket: "shop-csv-upload",
+      Bucket: "shop-file-upload",
       Key: `uploaded/${fileName}`,
       ContentType: "text/csv",
     };
