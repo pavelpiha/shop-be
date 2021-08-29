@@ -6,7 +6,7 @@ import {
 import { middyfy } from "../../libs/lambda";
 import createHttpError from "http-errors";
 
-import { ProductServiceInstance } from "../../service/product-service";
+import productServiceInstance from "../../service/product-service";
 import { ProductServiceInterface } from "../../service/product-service-interface";
 
 export class GetAllProductsController {
@@ -26,5 +26,5 @@ export class GetAllProductsController {
 }
 
 export const getAllProducts = middyfy(
-  new GetAllProductsController(ProductServiceInstance).handler
+  new GetAllProductsController(productServiceInstance).handler
 );

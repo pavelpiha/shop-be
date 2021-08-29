@@ -28,6 +28,15 @@ class ProductService implements ProductServiceInterface {
     this.clientPool = pool;
   }
 
+  async insertAllProducts(products: Product[]): Promise<Product[]> {
+    console.log("insertAllProducts!!!!!!!!!!!!!!!!");
+    const createdProducts = products.map((product) => {
+      return this.create(product);
+    });
+    const productsArray = await Promise.all(createdProducts);
+    return productsArray.flat();
+  }
+
   async getAll() {
     const result = await this.runQuery<Product>({
       text: SQL_GET_ALL_PRODUCTS,
@@ -92,6 +101,4 @@ class ProductService implements ProductServiceInterface {
   }
 }
 
-export const ProductServiceInstance: ProductService = new ProductService(
-  connectionPool
-);
+export default new ProductService(connectionPool);
