@@ -15,7 +15,6 @@ custom:
   bucketName: shop-file-upload
   uploadFolderName: uploaded
   parsedFolderName: parsed
-  productsSqsQueue: products-queue
 
 provider:
   name: aws
@@ -44,8 +43,6 @@ provider:
           Action: "sqs:*"
           Resource:
             - "Fn::GetAtt": ["SQSQueue", "Arn"]
-          # Resource:
-          #   - "arn:aws:sqs:::${self:custom.productsSqsQueue}"
 
 functions:
   importProductsFile:
