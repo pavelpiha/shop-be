@@ -40,9 +40,6 @@ const serverlessConfiguration: AWS = {
       DB_DATABASE: "${self:custom.dbConfig.DB_DATABASE, env:DB_DATABASE, ''}",
       DB_USER: "${self:custom.dbConfig.DB_USER, env:DB_USER, ''}",
       DB_PASSWORD: "${self:custom.dbConfig.DB_PASSWORD, env:DB_PASSWORD, ''}",
-      // SQS_URL: {
-      //   Ref: "SQSQueue",
-      // },
       SNS_ARN: {
         Ref: "SNSTopic",
       },
@@ -74,12 +71,6 @@ const serverlessConfiguration: AWS = {
 
   resources: {
     Resources: {
-      // SQSQueue: {
-      //   Type: "AWS::SQS::Queue",
-      //   Properties: {
-      //     QueueName: "products-queue",
-      //   },
-      // },
       SNSTopic: {
         Type: "AWS::SNS::Topic",
         Properties: {
