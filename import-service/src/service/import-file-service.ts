@@ -25,17 +25,9 @@ export const handleImportedFiles = async (
   });
   const productsArray = await Promise.all(promisesWithProducts);
   const result = productsArray.flat();
-  console.log("$$$$$$$$$$$$$$$$$$$$$handleImportedFiles", result);
+  console.log("handleImportedFiles result", result);
   return result;
-  // try {
-  //   for (const record of records) {
-  //     return await processImportedFile(record);
-  //   }
-  // } catch (error) {
-  //   console.error("handleImportedFiles error was thrown", error);
-  //   throw error;
 };
-// };
 
 const processImportedFile = async (record: S3EventRecord) => {
   try {
@@ -47,19 +39,15 @@ const processImportedFile = async (record: S3EventRecord) => {
     const command = new GetObjectCommand(getObjectParams);
     const item = await s3Client.send(command);
     const products: ProductDto[] = await readStream(item.Body);
-
     const validationErrors: ValidationError[][] | null =
       validateProducts(products);
 
     if (validationErrors) {
       console.error(`Validation failed for ${name}`, validationErrors);
-      throw new createHttpError.NotAcceptable(
-        `Not valid values in imported file`
-      );
     } else {
       await moveFileToParsedFolder(record);
-      products.forEach((product: ProductDto) => {
-        queueService.addToQueue(product);
+      products.forEach(async (product: ProductDto) => {
+        await queueService.addToQueue(product);
       });
       return products;
     }
@@ -75,13 +63,11 @@ const moveFileToParsedFolder = async (record) => {
 };
 
 const readStream = (stream: Readable): Promise<any> => {
-  console.log("readStream!!!!!!!!!!!", stream);
   const allRowsData = [];
   return new Promise((resolve, reject) => {
     stream
       .pipe(csvParser())
       .on("data", (row) => {
-        console.log("row", row);
         allRowsData.push(row);
       })
       .on("end", () => {
@@ -96,10 +82,10 @@ const readStream = (stream: Readable): Promise<any> => {
 export const validateProducts = (
   data: ProductDto[]
 ): ValidationError[][] | null => {
-  console.log("validateProducts!!!!!!!!!!!", data);
   let hasErrors = false;
   const validationErrors = data.map((data) => {
     const dtoInstance: ProductDto = new ProductDto(data);
+    console.log("dtoInstance ", dtoInstance);
     const errors: ValidationError[] = validateSync(dtoInstance);
     if (errors.length) hasErrors = true;
     return errors;
