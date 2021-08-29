@@ -1,9 +1,7 @@
 import { handlerPath } from "@libs/handlerResolver";
 
 export default {
-  handler: `${handlerPath(
-    __dirname
-  )}/catalog-batch-process.catalogBatchProcess`,
+  handler: `${handlerPath(__dirname)}/catalog-batch-process.handler`,
   events: [
     {
       sqs: {

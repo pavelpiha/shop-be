@@ -3,7 +3,6 @@ import type {
   APIGatewayProxyResult,
   Handler,
 } from "aws-lambda";
-import createHttpError from "http-errors";
 import type { FromSchema } from "json-schema-to-ts";
 
 export type InputAPIGatewayProxyEvent = Handler<
@@ -31,12 +30,3 @@ export const formatJSONResponse = (statusCode: number, response: Object) => {
     },
   };
 };
-export async function tryCatch(callBack: () => Promise<any>): Promise<any> {
-  try {
-    return await callBack();
-  } catch (error) {
-    console.error(error);
-    const response = new createHttpError.InternalServerError(error.message);
-    return formatJSONResponse(response.statusCode, response.message);
-  }
-}

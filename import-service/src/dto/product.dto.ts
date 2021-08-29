@@ -29,18 +29,18 @@ export class ProductDto {
   @IsString()
   @MaxLength(200)
   @IsOptional()
-  img?: string;
+  image?: string;
 
   @IsInt()
   @Min(0)
   count: number;
 
   constructor(data: ProductDto) {
-    this.count = Number(data.count);
     this.id = data.id;
     this.title = data.title;
     this.description = data.description;
     this.price = Number(data.price);
-    this.img = data.img;
+    this.image = data.image;
+    this.count = Number(data.count);
   }
 }

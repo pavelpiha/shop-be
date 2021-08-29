@@ -6,7 +6,7 @@ class QueueService {
   private sqs: SQS = new SQS({ region: "eu-west-1" });
 
   async addToQueue(product: ProductDto): Promise<SendMessageCommandOutput> {
-    console.log("addToQueue!!!!!!!!!!!!!!", product);
+    console.log("addToQueue ", product);
     return await this.sqs.sendMessage({
       QueueUrl: this.queueURL,
       MessageBody: JSON.stringify(product),

@@ -2,13 +2,11 @@ import { SNS } from "@aws-sdk/client-sns";
 import { Product } from "../model/product-model";
 
 const FILTER_TITLES = ["sony"];
-// const FILTER_TITLES = "sony";
 class NotificationService {
   private topicArn: string = process.env.SNS_ARN;
   private sns: SNS = new SNS({ region: "eu-west-1" });
 
   async notify(product: Product): Promise<void> {
-    console.log("notify!!!!!!!!!!!!!!!!");
     await this.sns.publish(
       {
         Subject: "Imported file processing info",
@@ -18,14 +16,20 @@ class NotificationService {
           hasTitle: {
             DataType: "String",
             StringValue: `${this.filterByTitle(product, FILTER_TITLES)}`,
-            // StringValue: `${product.title.toLowerCase().includes(FILTER_TITLES)}`,
           },
         },
       },
-      () => {
-        console.log("notify callback!!!!!!!", product);
-      }
+      this.publishCallback()
     );
+  }
+
+  private publishCallback() {
+    return (error, data) => {
+      console.log("notify callback data", data);
+      if (error) {
+        console.log("notify callback error", error);
+      }
+    };
   }
 
   filterByTitle(product: Product, filterTitles: string[]): boolean {
