@@ -13,9 +13,11 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.25.0",
+    "@aws-sdk/client-sqs": "^3.27.0",
     "@aws-sdk/s3-request-presigner": "^3.25.0",
     "@middy/core": "^1.5.2",
     "@middy/http-json-body-parser": "^1.5.2",
+    "class-validator": "^0.13.1",
     "csv-parser": "^3.0.0",
     "http-errors": "^1.8.0",
     "source-map-support": "^0.5.19"
