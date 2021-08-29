@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.paths.json",
   "compilerOptions": {
+    "experimentalDecorators": true,
     "lib": [
       "ESNext"
     ],
@@ -16,7 +17,8 @@
   "include": [
     "src/**/*.ts",
     "serverless.ts",
-    "src/functions/import-file/import-file.spec.js"
+    "src/functions/import-file/import-file.spec.js",
+    "../product-service/src/service/notification.service.ts"
   ],
   "exclude": [
     "node_modules/**/*",

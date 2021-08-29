@@ -15,6 +15,7 @@ custom:
   bucketName: shop-file-upload
   uploadFolderName: uploaded
   parsedFolderName: parsed
+  productsSqsQueue: products-queue
 
 provider:
   name: aws
@@ -28,6 +29,8 @@ provider:
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
     S3_BUCKET_NAME: ${self:custom.bucketName}
+    SQS_URL:
+      Ref: SQSQueue
   iam:
     role:
       statements:
@@ -37,6 +40,12 @@ provider:
             - "arn:aws:s3:::${self:custom.bucketName}"
             - "arn:aws:s3:::${self:custom.bucketName}/*"
             - "arn:aws:s3:::${self:custom.bucketName}/*/*"
+        - Effect: Allow
+          Action: "sqs:*"
+          Resource:
+            - "Fn::GetAtt": ["SQSQueue", "Arn"]
+          # Resource:
+          #   - "arn:aws:sqs:::${self:custom.productsSqsQueue}"
 
 functions:
   importProductsFile:
@@ -53,7 +62,7 @@ functions:
             origin: "*"
 
   importFileParser:
-    handler: src/functions/import-file-parser/handler.importFileParser
+    handler: src/functions/import-file-parser/importFileParser.importFileParser
     events:
       - s3:
           bucket: ${self:custom.bucketName}
@@ -61,3 +70,9 @@ functions:
           rules:
             - prefix: ${self:custom.uploadFolderName}
           existing: true
+resources:
+  Resources:
+    SQSQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "products-queue"
