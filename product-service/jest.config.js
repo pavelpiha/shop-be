@@ -1,8 +1,12 @@
 /** @type {import('@ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
-  preset: 'ts-jest',
+  preset: "ts-jest",
   globals: {
     allowSyntheticDefaultImports: true,
   },
-  testEnvironment: 'node',
+  testEnvironment: "node",
+  moduleNameMapper: {
+    "^@libs/(.*)$": "<rootDir>/src/libs/$1",
+    "^@service/(.*)$": "<rootDir>/src/service/$1",
+  },
 };
