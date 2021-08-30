@@ -2,7 +2,7 @@ import { SNS } from "@aws-sdk/client-sns";
 import { Product } from "../model/product-model";
 
 const FILTER_TITLES = ["sony"];
-class NotificationService {
+export class NotificationService {
   private topicArn: string = process.env.SNS_ARN;
   private sns: SNS = new SNS({ region: "eu-west-1" });
 
@@ -40,5 +40,3 @@ class NotificationService {
     return result;
   }
 }
-
-export default new NotificationService();
