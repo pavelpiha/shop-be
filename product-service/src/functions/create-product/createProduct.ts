@@ -7,9 +7,9 @@ import {
 import { middyfy } from "../../libs/lambda";
 import createHttpError from "http-errors";
 
-import { ProductServiceInstance } from "../../service/product-service";
-import { ProductServiceInterface } from "../../service/product-service-interface";
+import { ProductServiceInterface } from "@service/product-service-interface";
 import schema from "./schema";
+import { ProductDaoService } from "../../service/product-dao.service";
 
 export type CreateProductEvent = ParsedAPIGatewayProxyEvent<typeof schema>;
 
@@ -40,5 +40,5 @@ export class CreateProductController {
 }
 
 export const handler = middyfy(
-  new CreateProductController(ProductServiceInstance).handler
+  new CreateProductController(new ProductDaoService()).handler
 );

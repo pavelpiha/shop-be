@@ -2,12 +2,12 @@ import "source-map-support/register";
 import {
   formatJSONResponse,
   InputAPIGatewayProxyEvent,
-} from "../../libs/apiGateway";
-import { middyfy } from "../../libs/lambda";
+} from "@libs/apiGateway";
+import { middyfy } from "@libs/lambda";
 import createHttpError from "http-errors";
 
-import { ProductServiceInstance } from "../../service/product-service";
-import { ProductServiceInterface } from "../../service/product-service-interface";
+import { ProductDaoService } from "@service/product-dao.service";
+import { ProductServiceInterface } from "@service/product-service-interface";
 
 export class GetProductByIdController {
   constructor(private service: ProductServiceInterface) {}
@@ -38,6 +38,6 @@ export class GetProductByIdController {
   };
 }
 
-export const getProductById = middyfy(
-  new GetProductByIdController(ProductServiceInstance).handler
+export const handler = middyfy(
+  new GetProductByIdController(new ProductDaoService()).handler
 );
