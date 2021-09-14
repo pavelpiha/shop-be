@@ -21,6 +21,7 @@ export const formatJSONResponse = (statusCode: number, response: Object) => {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Headers": "*",
       "Access-Control-Allow-Methods": "GET, OPTIONS, PUT",
+      "Access-Control-Allow-Credentials": true,
     },
   };
 };
