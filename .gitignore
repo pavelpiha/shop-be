@@ -13,11 +13,13 @@ config.ts
 **/node_modules
 **/coverage
 /jspm_packages
+**/dist
 
 # Serverless directories
 .serverless
 #Environment variables
 .env
+!/bff-service/.env
 
 # profiling files
 chrome-profiler-events*.json
@@ -44,3 +46,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
